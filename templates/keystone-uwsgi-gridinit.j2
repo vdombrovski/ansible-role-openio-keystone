@@ -1,0 +1,9 @@
+[Service.{{ openio_namespace|default(openio_keystone_namespace_default)}}-{{ item }}]
+command={{ openio_keystone_bindir }}/uwsgi --ini /etc/uwsgi/{{ item }}.ini --logto /var/log/keystone/{{ item }}.log {{ program_config_options|default('') }}
+enabled=true
+start_at_boot=yes
+on_die=respawn
+group={{ item }}
+uid={{ openio_keystone_system_user_name }}
+gid={{ openio_keystone_system_group_name }}
+env.PATH=/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin

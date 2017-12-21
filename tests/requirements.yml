@@ -1,0 +1,17 @@
+- src: https://github.com/open-io/ansible-role-repo-openstack
+  version: master
+  name: repo-openstack
+
+- src: https://github.com/open-io/ansible-role-repo-openio-sds
+  version: master
+  name: repo-openio-sds
+
+- src: https://github.com/open-io/ansible-role-gridinit
+  version: master
+  name: gridinit
+
+#- name: openio-keystone
+#  src: https://git.openstack.org/openstack/openstack-ansible-plugins
+#  src: https://github.com/openstack/openstack-ansible-plugins
+#  scm: git
+#  version: stable/pike

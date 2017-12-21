@@ -1,0 +1,28 @@
+---
+
+- name: 'Install packages'
+  package:
+    name: "{{ item }}"
+    state: installed
+  with_items: "{{ openio_keystone_packages }}"
+
+- name: 'Install configuration files'
+  template:
+    src: "{{ item.src | default(omit)}}"
+    dest: "{{ item.dest }}"
+    owner: root
+    group: "{{ openio_keystone_system_group_name }}"
+    mode: '0640'
+  with_items:
+    - src: keystone.conf.j2
+      dest: "{{ openio_keystone_config_dir }}/keystone.conf"
+    - src: keystone-paste.ini
+      dest: "{{ openio_keystone_config_dir }}/keystone-paste.ini"
+#    - src: policy.json
+#      dest: "{{ openio_keystone_config_dir }}/policy.json"
+#  notify:
+#    - Manage LB
+#    - Restart uWSGI
+#    - Restart web server
+
+...

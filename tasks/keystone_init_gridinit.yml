@@ -1,0 +1,24 @@
+---
+- name: Ensure gridinit directory exists
+  file:
+    path: /etc/gridinit.d
+    state: directory
+    mode: 0755
+
+- name: Configure gridinit to handle services
+  template:
+    src: "keystone-uwsgi-gridinit.j2"
+    dest: "/etc/gridinit.d/{{ openio_namespace |default(openio_keystone_namespace_default) }}-{{ item }}"
+  with_items: "{{ openio_keystone_wsgi_program_names }}"
+
+- name: Reload gridinit (should be a handler)
+  gridinitcmd:
+    state: reload
+  changed_when: false
+
+- name: Ensure services are started
+  gridinitcmd:
+    name: "{{ openio_namespace |default(openio_keystone_namespace_default) }}-{{ item }}"
+    state: start
+  with_items: "{{ openio_keystone_wsgi_program_names }}"
+...

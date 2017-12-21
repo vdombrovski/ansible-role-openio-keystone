@@ -1,0 +1,35 @@
+---
+# tasks file for ansible-role-openio-keystone
+- name: 'Fail if required variables are not set'
+  fail:
+    msg: "{{ item }} variable must be set to apply this role."
+  when: (item is undefined) or (item is none)
+  with_items: "{{ openio_keystone_required_vars }}"
+
+- name: "Include {{ ansible_distribution }} variables"
+  include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ ansible_distribution }}.yml"
+    - "{{ ansible_os_family }}.yml"
+
+- include: keystone_install.yml
+  static: no
+
+- include: keystone_db_setup.yml
+
+- include: keystone_fernet.yml
+  static: no
+  when:
+    - "'fernet' in openio_keystone_token_provider"
+
+- include: keystone_credentials.yml
+  static: no
+
+- include: keystone_uwsgi.yml
+  static: no
+
+- include: keystone_service_setup.yml
+  when:
+    - openio_keystone_service_setup | bool
+  run_once: yes
+...
