@@ -1,8 +1,9 @@
 ---
 - name: Check current state of Keystone DB
-  command: "{{ openio_keystone_bindir }}/keystone-manage db_sync --check"
+  shell: "{{ openio_keystone_bindir }}/keystone-manage db_sync --check"
   become: yes
-  become_user: "{{ openio_keystone_system_user_name }}"
+#  become_user: "{{ openio_keystone_system_user_name }}"
+  become_user: root
   register: openio_keystone_db_sync_check
   failed_when: "openio_keystone_db_sync_check.rc == 1"
   changed_when: "openio_keystone_db_sync_check.rc not in [0, 1]"

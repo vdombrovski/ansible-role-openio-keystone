@@ -642,7 +642,7 @@ log_dir = {{ openio_keystone_config_default_log_dir }}
 
 
 [database]
-connection = sqlite:////var/lib/keystone/keystone.db
+connection = {{ openio_keystone_database_connection }}
 
 #
 # From oslo.db
