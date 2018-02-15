@@ -2,11 +2,29 @@
 - include: keystone_fernet_keys_create.yml
   when: inventory_hostname == groups[openio_keystone_inventory_group][0]
 
-- name: Copying fernet key repository
+- name: fetch fernet tokens locally
+  synchronize:
+    mode: pull
+    src: "{{ openio_keystone_fernet_tokens_key_repository }}"
+    dest: "{{ openio_keystone_tmp_keys_dir }}/fernet-keys"
+    archive: yes
+    delete: yes
+  when: inventory_hostname == groups[openio_keystone_inventory_group][0]
+
+- name: Copying fernet keys to all keystone hosts
   synchronize:
     mode: push
-    src: "{{ openio_keystone_fernet_tokens_key_repository }}"
-    dest: "{{ openio_keystone_fernet_tokens_key_repository }}"
+    src: "{{ openio_keystone_tmp_keys_dir }}/fernet-keys"
+    dest: "{{ openio_keystone_fernet_tokens_key_repository }}/.."
+    archive: yes
+    delete: yes
   when: inventory_hostname != groups[openio_keystone_inventory_group][0]
-  delegate_to: "{{ groups[openio_keystone_inventory_group][0] }}"
+
+- name: Reset fernet keys ownership
+  file:
+    path: "{{ openio_keystone_fernet_tokens_key_repository }}"
+    owner: root
+    group: root
+    state: directory
+    recurse: yes
 ...
