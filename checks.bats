@@ -21,9 +21,9 @@ connection_string="--os-username admin --os-project-name admin --os-user-domain-
   echo "output: "$output
   echo "status: "$status
   [[ "${status}" -eq "0" ]]
-  [[ "${output}" =~ '"admin","http://172.17.0.2:35357"' ]]
-  [[ "${output}" =~ '"internal","http://172.17.0.2:5000"' ]]
-  [[ "${output}" =~ '"public","http://172.17.0.2:5000"' ]]
+  [[ "${output}" =~ "\"admin\",\"http://${SUT_IP}:35357\"" ]]
+  [[ "${output}" =~ "\"internal\",\"http://${SUT_IP}:5000\"" ]]
+  [[ "${output}" =~ "\"public\",\"http://${SUT_IP}:5000\"" ]]
 }
 
 

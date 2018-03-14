@@ -6,3 +6,7 @@
   version: master
   name: repo
 
+- src: https://github.com/mjanser/ansible-role-mysql.git
+  version: master
+  name: mysql
+
