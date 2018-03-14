@@ -1,0 +1,8 @@
+- src: https://github.com/open-io/ansible-role-openio-gridinit.git
+  version: master
+  name: gridinit
+
+- src: https://github.com/racciari/ansible-role-repo-openio-sds
+  version: master
+  name: repo
+

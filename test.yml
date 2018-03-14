@@ -1,7 +1,48 @@
 # Test playbook
 ---
+- name: generate docker keystone group
+  hosts: all
+  gather_facts: false
+  tasks:
+    - add_host:
+        name: localhost
+        groups: keystone
+      delegate_to: localhost
+      run_once: true
+      changed_when: false
 
-- hosts: all
+- hosts: localhost
   become: true
   roles:
+    - role: repo
+    - role: gridinit
+      openio_gridinit_services:
+        - name: keystone-wsgi-public
+          namespace: "{{ namespace | default('OPENIO')}}"
+          type: keystone
+          configuration:
+            command: "{{ '/usr/bin/uwsgi --ini /etc/uwsgi' if ansible_os_family == 'Debian' else '/usr/sbin/uwsgi --ini /etc/uwsgi.d' }}/keystone-wsgi-public.ini"
+            enabled: true
+            start_at_boot: true
+            on_die: respawn
+            uid: root
+            gid: root
+            env_PATH: /usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin
+
+        - name: keystone-wsgi-admin
+          namespace: "{{ namespace | default('OPENIO')}}"
+          type: keystone
+          configuration:
+            command: "{{ '/usr/bin/uwsgi --ini /etc/uwsgi' if ansible_os_family == 'Debian' else '/usr/sbin/uwsgi --ini /etc/uwsgi.d' }}/keystone-wsgi-admin.ini"
+            enabled: true
+            start_at_boot: true
+            on_die: respawn
+            uid: root
+            gid: root
+            env_PATH: /usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin
+
     - role: role_under_test
+      openio_keystone_repo_managed: true
+      openio_keystone_wsgi_processes: 2
+      openio_keystone_config_cache_memcache_servers: ""
+      openio_keystone_nodes_group: keystone
