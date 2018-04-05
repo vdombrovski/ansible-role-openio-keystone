@@ -16,36 +16,26 @@
   roles:
     - role: repo
     - role: gridinit
-      openio_gridinit_services:
-        - name: keystone-wsgi-public
-          namespace: "{{ namespace | default('OPENIO')}}"
-          type: keystone
-          configuration:
-            command: "{{ '/usr/bin/uwsgi --ini /etc/uwsgi' if ansible_os_family == 'Debian' else '/usr/sbin/uwsgi --ini /etc/uwsgi.d' }}/keystone-wsgi-public.ini"
-            enabled: true
-            start_at_boot: true
-            on_die: respawn
-            uid: root
-            gid: root
-            env_PATH: /usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin
-
-        - name: keystone-wsgi-admin
-          namespace: "{{ namespace | default('OPENIO')}}"
-          type: keystone
-          configuration:
-            command: "{{ '/usr/bin/uwsgi --ini /etc/uwsgi' if ansible_os_family == 'Debian' else '/usr/sbin/uwsgi --ini /etc/uwsgi.d' }}/keystone-wsgi-admin.ini"
-            enabled: true
-            start_at_boot: true
-            on_die: respawn
-            uid: root
-            gid: root
-            env_PATH: /usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin
-
     - role: mysql
+      #mariadb_bind_address: "127.0.0.1"
+      #mariadb_root_password: "My $3cr3t password"
+      #mariadb_databases:
+      #  - name: keystone
+      #mariadb_users:
+      #  - name: keystone
+      #    password: "My $3cr3t password"
+      #    priv: 'keystone.*:ALL'
+      #    host: '%'
+
+      #  - name: keystone
+      #    password: "My $3cr3t password"
+      #    priv: '*.*:SUPER'
+      #    append_privs: "yes"
+      #    host: '%'
       mysql_vendor: mysql
       mysql_origin: upstream
       mysql_bind_address: "127.0.0.1"
-      mysql_import_timezones: no
+      mysql_import_timezones: false
       mysql_root_password: "My $3cr3t password"
       mysql_databases:
         - name: keystone
@@ -55,13 +45,13 @@
           privileges: 'keystone.*:ALL'
           #append_privileges: yes
           host: '%'
-     
+
         - name: keystone
           password: "My $3cr3t password"
           privileges: '*.*:SUPER'
-          append_privileges: yes
+          append_privileges: "yes"
           host: '%'
- 
+
     - role: role_under_test
       openio_keystone_database_engine: mysql
       openio_keystone_database_mysql_connection_user: keystone
@@ -69,7 +59,7 @@
       openio_keystone_database_mysql_connection_address: 127.0.0.1
       openio_keystone_database_mysql_connection_database: keystone
 
-      openio_keystone_repo_managed: true
       openio_keystone_wsgi_processes: 2
       openio_keystone_config_cache_memcache_servers: ""
       openio_keystone_nodes_group: keystone
+...
