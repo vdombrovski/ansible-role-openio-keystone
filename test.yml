@@ -17,7 +17,9 @@
     - role: repo
     - role: gridinit
     - role: role_under_test
+      openio_keystone_bind_interface: "{{ ansible_default_ipv4.alias }}"
+      openio_keystone_namespace: TRAVIS
+      openio_keystone_nodes_group: keystone
       openio_keystone_wsgi_processes: 2
       openio_keystone_config_cache_memcache_servers: ""
-      openio_keystone_nodes_group: keystone
 ...

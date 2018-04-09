@@ -17,21 +17,6 @@
     - role: repo
     - role: gridinit
     - role: mysql
-      #mariadb_bind_address: "127.0.0.1"
-      #mariadb_root_password: "My $3cr3t password"
-      #mariadb_databases:
-      #  - name: keystone
-      #mariadb_users:
-      #  - name: keystone
-      #    password: "My $3cr3t password"
-      #    priv: 'keystone.*:ALL'
-      #    host: '%'
-
-      #  - name: keystone
-      #    password: "My $3cr3t password"
-      #    priv: '*.*:SUPER'
-      #    append_privs: "yes"
-      #    host: '%'
       mysql_vendor: mysql
       mysql_origin: upstream
       mysql_bind_address: "127.0.0.1"
@@ -52,14 +37,18 @@
           append_privileges: "yes"
           host: '%'
 
+    - role: repo
+    - role: gridinit
     - role: role_under_test
+      openio_keystone_namespace: TRAVIS
+      openio_keystone_nodes_group: keystone
       openio_keystone_database_engine: mysql
       openio_keystone_database_mysql_connection_user: keystone
       openio_keystone_database_mysql_connection_password: "My $3cr3t password"
       openio_keystone_database_mysql_connection_address: 127.0.0.1
-      openio_keystone_database_mysql_connection_database: keystone
+      #openio_keystone_database_mysql_connection_database: keystone
 
       openio_keystone_wsgi_processes: 2
+      #no memcached
       openio_keystone_config_cache_memcache_servers: ""
-      openio_keystone_nodes_group: keystone
 ...
