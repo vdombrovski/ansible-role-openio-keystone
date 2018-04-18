@@ -20,6 +20,29 @@
       openio_keystone_bind_interface: "{{ ansible_default_ipv4.alias }}"
       openio_keystone_namespace: TRAVIS
       openio_keystone_nodes_group: keystone
-      openio_keystone_wsgi_processes: 2
-      openio_keystone_config_cache_memcache_servers: ""
-...
+      openio_keystone_bind_interface: "{{ ansible_default_ipv4.alias }}"
+      #openio_keystone_config_cache_memcache_servers: "127.0.0.1:6019"
+      openio_keystone_services_to_bootstrap:
+        - name: keystone
+          user: admin
+          password: TRAVIS_PASS
+          project: admin
+          role: admin
+          regionid: RegionOne
+          # eventually a VIP
+          adminurl: "http://172.17.0.2:35357"
+          publicurl: "http://172.17.0.2:5000"
+          internalurl: "http://172.17.0.2:5000"
+      openio_keystone_services:
+        - name: openio-swift
+          type: object-store
+          description: OpenIO SDS swift proxy
+          endpoint:
+            # eventually a VIP
+            - interface: admin
+              url: "http://172.17.0.2:6007/v1/AUTH_%(tenant_id)s"
+            - interface: internal
+              url: "http://172.17.0.2:6007/v1/AUTH_%(tenant_id)s"
+            - interface: public
+              url: "http://172.17.0.2:6007/v1/AUTH_%(tenant_id)s"
+
