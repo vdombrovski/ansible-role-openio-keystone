@@ -1,35 +1,97 @@
+# roles/keystone/tasks/main.yml
 ---
-# tasks file for ansible-role-openio-keystone
-- name: 'Fail if required variables are not set'
-  fail:
-    msg: "{{ item }} variable must be set to apply this role."
-  when: (item is undefined) or (item is none)
-  with_items: "{{ openio_keystone_required_vars }}"
-
 - name: "Include {{ ansible_distribution }} variables"
   include_vars: "{{ item }}"
   with_first_found:
     - "{{ ansible_distribution }}.yml"
     - "{{ ansible_os_family }}.yml"
+  tags: install
 
-- include: keystone_install.yml
-  static: no
+- name: "Include {{ ansible_distribution }} tasks"
+  include_tasks: "{{ item }}"
+  with_first_found:
+    - "{{ ansible_distribution }}.yml"
+    - "{{ ansible_os_family }}.yml"
+  tags: install
 
-- include: keystone_db_setup.yml
+- name: Test directories presence
+  stat:
+    path: "{{ item }}"
+  register: _dir
+  with_items:
+    - "/etc/gridinit.d/{{ openio_keystone_namespace }}"
+    - "{{ openio_keystone_sysconfig_dir }}/keystone-{{ openio_keystone_serviceid }}"
 
-- include: keystone_fernet.yml
-  static: no
+- name: Ensure directories exists
+  file:
+    path: "{{ item.item }}"
+    state: directory
+    owner: openio
+    group: openio
+    mode: 0755
+    recurse: true
+  with_items: "{{ _dir.results }}"
+  when: not item.stat.exists
+  tags: install
+- name: 'Install configuration files 1/2'
+  copy:
+    src: keystone-paste.ini
+    dest: "{{ openio_keystone_config_dir }}/keystone-paste.ini"
+    owner: root
+    group: "{{ openio_keystone_system_group_name }}"
+    mode: '0640'
+  tags: configure
+
+- name: 'Install configuration files 2/2'
+  template:
+    src: keystone.conf.j2
+    dest: "{{ openio_keystone_config_dir }}/keystone.conf"
+    owner: root
+    group: "{{ openio_keystone_system_group_name }}"
+    mode: '0640'
+  tags: configure
+
+- import_tasks: db_setup.yml
+  tags: configure
+
+- import_tasks: fernet.yml
   when:
     - "'fernet' in openio_keystone_token_provider"
 
-- include: keystone_credentials.yml
-  static: no
+- import_tasks: credentials.yml
 
-- include: keystone_uwsgi.yml
-  static: no
+- name: Generate configuration files (uwsgi)
+  template:
+    src: "keystone-uwsgi.ini.j2"
+    dest: "{{ openio_keystone_sysconfig_dir }}/keystone-{{ openio_keystone_serviceid }}/{{ item }}.ini"
+    mode: "0644"
+  with_items: "{{ openio_keystone_wsgi_program_names }}"
+  register: _uwsgi_conf
 
-- include: keystone_service_setup.yml
+- name: Generate configuration files (gridinit)
+  template:
+    src: "gridinit_keystone.conf.j2"
+    dest: "{{ openio_keystone_gridinit_dir }}/{{ openio_keystone_gridinit_file_prefix }}\
+      keystone-{{ openio_keystone_serviceid }}.{{ item.0 }}.conf"
+    mode: "0644"
+  with_indexed_items: "{{ openio_keystone_wsgi_program_names }}"
+  register: _gridinit_conf
+
+- name: restart keystone
+  shell: |
+    gridinit_cmd reload
+    gridinit_cmd restart  {{openio_keystone_namespace}}-keystone-{{openio_keystone_serviceid}}.0
+    gridinit_cmd restart  {{openio_keystone_namespace}}-keystone-{{openio_keystone_serviceid}}.1
+  when: _uwsgi_conf.changed or  _gridinit_conf.changed
+
+- import_tasks: bootstrap.yml
   when:
-    - openio_keystone_service_setup | bool
-  run_once: yes
+    - _db_sync_check.rc | int == 2
+    - "(not openio_keystone_bootstrap_all_nodes and inventory_hostname == groups[openio_keystone_nodes_group][0]) \
+      or openio_keystone_bootstrap_all_nodes"
+  tags: configure
+
+- import_tasks: postinstall.yml
+  tags: configure
+
 ...

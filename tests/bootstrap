@@ -1,9 +1,0 @@
-keystone-manage bootstrap --bootstrap-project-name admin --bootstrap-username admin --bootstrap-password ADMIN_PASS --bootstrap-role-name admin --bootstrap-service-name keystone --bootstrap-region-id RegionOne --bootstrap-admin-url http://127.0.0.1:35357 --bootstrap-public-url http://127.0.0.1:5000 --bootstrap-internal-url http://127.0.0.1:5000
-
-export OS_IDENTITY_API_VERSION=3
-export OS_AUTH_URL=http://127.0.0.1:35357
-export OS_USER_DOMAIN_ID=default
-export OS_PROJECT_DOMAIN_ID=default
-export OS_PROJECT_NAME=admin
-export OS_USERNAME=admin
-export OS_PASSWORD=ADMIN_PASS

@@ -23,17 +23,15 @@
     {{ openio_keystone_bindir }}/keystone-manage fernet_setup
                                        --keystone-user "{{ openio_keystone_system_user_name }}"
                                        --keystone-group "{{ openio_keystone_system_group_name }}"
-  become: yes
-  become_user: "{{ openio_keystone_system_user_name }}"
-  when: not _fernet_keys.stat.exists
+  when:
+    - not _fernet_keys.stat.exists
 
 - name: Rotate fernet keys for Keystone
   command: >
     {{ openio_keystone_bindir }}/keystone-manage fernet_rotate
                                        --keystone-user "{{ openio_keystone_system_user_name }}"
                                        --keystone-group "{{ openio_keystone_system_group_name }}"
-  become: yes
-  become_user: "{{ openio_keystone_system_user_name }}"
-  when: _fernet_keys.stat.exists
+  when:
+    - not _fernet_keys.stat.exists
   changed_when: false
 ...

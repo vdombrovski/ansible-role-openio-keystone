@@ -1,2 +1,8 @@
 ---
-# vars file for ansible-role-openio-keystone
+openio_keystone_sysconfig_dir: "/etc/oio/sds/{{ openio_keystone_namespace }}"
+openio_keystone_servicename: "keystone-{{ openio_keystone_serviceid }}"
+
+openio_keystone_definition_file: >
+  "{{ openio_keystone_sysconfig_dir }}/
+  {{ openio_keystone_servicename }}/{{ openio_keystone_servicename }}.conf"
+...

@@ -1,0 +1,16 @@
+---
+
+- name: RedHat| Install repository
+  package:
+    name: "centos-release-openstack-{{ openio_keystone_openstack_distribution }}"
+    state: installed
+  when: openio_keystone_repo_managed
+
+- name: Install packages
+  package:
+    name: "{{ pkg }}"
+    state: installed
+  with_items: "{{ keystone_packages }}"
+  loop_control:
+    loop_var: pkg
+...

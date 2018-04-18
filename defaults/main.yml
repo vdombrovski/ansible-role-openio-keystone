@@ -1,104 +1,122 @@
+# roles/keystone/defaults/main.yml
 ---
-# defaults file for ansible-role-openio-keystone
+openio_keystone_namespace: "OPENIO"
+openio_keystone_serviceid: "0"
 
-openio_keystone_inventory_group: openio_keystone
-openio_keystone_namespace_default: OPENIO
-openio_keystone_service_setup: true
+openio_keystone_bind_interface: "{{ ansible_default_ipv4.alias }}"
 
-# System
+openio_keystone_repo_managed: false
+openio_keystone_openstack_distribution: pike
+openio_keystone_nodes_group: openio_keystone
+
+openio_keystone_database_engine: sqlite
+openio_keystone_database_sqlite_directory: /var/lib/keystone
+openio_keystone_database_sqlite_file: keystone.db
+openio_keystone_database_mysql_connection_user: keystone
+openio_keystone_database_mysql_connection_password: KEYSTONE_PASS
+openio_keystone_database_mysql_connection_address:
+  "{{ hostvars[inventory_hostname]['ansible_' + openio_keystone_bind_interface]['ipv4']['address'] }}"
+openio_keystone_database_mysql_connection_database: keystone
+
+
 openio_keystone_bindir: /usr/bin
 openio_keystone_system_user_name: keystone
 openio_keystone_system_group_name: keystone
 openio_keystone_config_dir: /etc/keystone
-openio_keystone_config_default_log_dir: /var/log/keystone
-openio_keystone_tmp_keys_dir: /tmp
 
-# uWSGI
-openio_keystone_wsgi_threads: 1
-## Cap the maximun number of processes when a user value is unspecified.
-openio_keystone_wsgi_processes_max: 16
-openio_keystone_wsgi_processes: "{{ [[ansible_processor_vcpus|default(1), 1] | max * 2, openio_keystone_wsgi_processes_max] | min }}"
-openio_keystone_wsgi_public_program_name: keystone-wsgi-public
-openio_keystone_wsgi_admin_program_name: keystone-wsgi-admin
-openio_keystone_wsgi_program_names:
-  - "{{ openio_keystone_wsgi_public_program_name }}"
-  - "{{ openio_keystone_wsgi_admin_program_name }}"
-openio_keystone_uwsgi_bind:
-  keystone-wsgi-public:
-    http-socket: 0.0.0.0:5000
-    socket: 0.0.0.0:5001
-  keystone-wsgi-admin:
-    http-socket: 0.0.0.0:35357
-    socket: 0.0.0.0:35358
+openio_keystone_config_default_log_dir: "/var/log/keystone"
 
-# Global
-openio_keystone_config_default_path: /etc/keystone/keystone.conf
+openio_keystone_config_default_admin_token: ""
+openio_keystone_config_default_debug: false
+openio_keystone_config_cache_backend: dogpile.cache.memcached
+openio_keystone_config_cache_enabled: true
+openio_keystone_config_cache_debug_cache_backend: ""
+openio_keystone_config_cache_memcache_servers:
+  "{{ hostvars[inventory_hostname]['ansible_' + openio_keystone_bind_interface]['ipv4']['address'] }}:6019"
+openio_keystone_config_cache_memcache_dead_retry: ""
 
-openio_keystone_required_vars:
-  - openio_keystone_database_connection_password
-  - openio_keystone_database_connection_address
-  - openio_keystone_auth_admin_password
-  - openio_keystone_service_password
-#  - openio_keystone_auth_admin_password
-#  - openio_keystone_mysql_password
-#  - openio_keystone_service_password
+openio_keystone_database_connection: "{% if openio_keystone_database_engine == 'sqlite'%}\
+  sqlite:///{{ openio_keystone_database_sqlite_directory }}/{{ openio_keystone_database_sqlite_file }}\
+  {% elif openio_keystone_database_engine == 'mysql' %}\
+  mysql+pymysql://{{ openio_keystone_database_mysql_connection_user }}:\
+  {{ openio_keystone_database_mysql_connection_password }}@{{ openio_keystone_database_mysql_connection_address }}/\
+  {{ openio_keystone_database_mysql_connection_database }}?charset=utf8{% endif %}"
 
-# Database
-openio_keystone_database_engine: sqlite
-openio_keystone_database_path: /var/lib/keystone/keystone.db
-openio_keystone_database_connection_user: keystone
-openio_keystone_database_connection_password: KEYSTONE_PASS
-openio_keystone_database_connection_address: 127.0.0.1
-openio_keystone_database_connection_database: keystone
-openio_keystone_database_connection: >-
-  "{% if openio_keystone_database_engine == 'sqlite'%}sqlite:///{{ openio_keystone_database_path }}{% elif openio_keystone_database_engine == 'mysql' %}mysql+pymysql://{{ openio_keystone_database_connection_user }}:{{ openio_keystone_database_connection_password }}@{{ openio_keystone_database_connection_address }}/{{ openio_keystone_database_connection_database }}?charset=utf8{% endif %}"
-#keystone_database_connection: mysql+pymysql://{{ openio_keystone_database_connection_user }}:{{ openio_keystone_database_connection_password }}@{{ openio_keystone_database_connection_address }}/{{ openio_keystone_database_connection_database }}?charset=utf8
-
-# Tokens and credentials
 openio_keystone_token_provider: fernet
+openio_keystone_tmp_keys_dir: /tmp
 # Tokens
 openio_keystone_fernet_tokens_key_repository: /etc/keystone/fernet-keys/
-openio_keystone_fernet_tokens_max_active_keys: 7
 # Credentials
 openio_keystone_credentials_tokens_key_repository: /etc/keystone/credential-keys/
 
-# Config file
-#openio_keystone_config_default_admin_token:
-openio_keystone_config_default_debug: false
+openio_keystone_gridinit_dir: "/etc/gridinit.d/{{ openio_keystone_namespace }}"
+openio_keystone_gridinit_file_prefix: ""
+
+openio_keystone_wsgi_program_names:
+  - "{{ openio_keystone_wsgi_public_program_name }}"
+  - "{{ openio_keystone_wsgi_admin_program_name }}"
+openio_keystone_wsgi_public_program_name: keystone-wsgi-public
+openio_keystone_wsgi_admin_program_name: keystone-wsgi-admin
+openio_keystone_uwsgi_bind:
+  keystone-wsgi-public:
+    http-socket:
+      "{{ hostvars[inventory_hostname]['ansible_' + openio_keystone_bind_interface]['ipv4']['address'] }}:5000"
+  keystone-wsgi-admin:
+    http-socket:
+      "{{ hostvars[inventory_hostname]['ansible_' + openio_keystone_bind_interface]['ipv4']['address'] }}:35357"
+openio_keystone_wsgi_threads: 1
+openio_keystone_wsgi_processes_max: 16
+openio_keystone_wsgi_processes: "{{ [[ansible_processor_vcpus|default(1), 1] | \
+  max * 2, openio_keystone_wsgi_processes_max] | min }}"
 
 # Bootstrap
-openio_keystone_api_version: 3
-openio_keystone_service_adminuri: http://127.0.0.1:35357
-openio_keystone_service_publicuri: http://127.0.0.1:5000
-openio_keystone_service_internaluri: http://127.0.0.1:5000
-openio_keystone_service_in_ldap: false
+openio_keystone_bootstrap_all_nodes: false
+openio_keystone_services_to_bootstrap:
+  - name: keystone
+    user: admin
+    password: ADMIN_PASS
+    project: admin
+    role: admin
+    regionid: RegionOne
+    adminurl:
+      "http://{{ hostvars[inventory_hostname]['ansible_' + openio_keystone_bind_interface]['ipv4']['address'] }}:35357"
+    publicurl:
+      "http://{{ hostvars[inventory_hostname]['ansible_' + openio_keystone_bind_interface]['ipv4']['address'] }}:5000"
+    internalurl:
+      "http://{{ hostvars[inventory_hostname]['ansible_' + openio_keystone_bind_interface]['ipv4']['address'] }}:5000"
 
-# Role info
-openio_keystone_role_name: admin
-openio_keystone_default_role_name: _member_
+openio_keystone_cloudname: openio
+openio_keystone_users:
+  - name: demo
+    password: DEMO_PASS
+  - name: swift
+    password: SWIFT_PASS
 
-# Admin info
-openio_keystone_admin_tenant_name: admin
-openio_keystone_admin_user_name: admin
-openio_keystone_auth_admin_password: ADMIN_PASS
-openio_keystone_admin_description: "Admin Tenant"
+openio_keystone_services:
+  - name: openio-swift
+    type: object-store
+    description: OpenIO SDS swift proxy
+    endpoint:
+      - interface: admin
+        url: "http://{{ hostvars[inventory_hostname]['ansible_' + openio_keystone_bind_interface]['ipv4']['address'] }}:6007/v1/AUTH_%(tenant_id)s"
+      - interface: internal
+        url: "http://{{ hostvars[inventory_hostname]['ansible_' + openio_keystone_bind_interface]['ipv4']['address'] }}:6007/v1/AUTH_%(tenant_id)s"
+      - interface: public
+        url: "http://{{ hostvars[inventory_hostname]['ansible_' + openio_keystone_bind_interface]['ipv4']['address'] }}:6007/v1/AUTH_%(tenant_id)s"
 
-# Service Type and Data
-openio_keystone_service_setup: true
-openio_keystone_service_region: RegionOne
-openio_keystone_service_name: keystone
-openio_keystone_service_type: identity
-openio_keystone_service_description: "Keystone Identity Service"
-openio_keystone_service_tenant_name: service
-openio_keystone_service_user_name: keystone
-openio_keystone_service_password: KEYSTONE_PASS
 
-clouds:
-  openio:
-    auth:
-        auth_url: "http://{{ openio_keystone_uwsgi_bind['keystone-wsgi-admin']['http-socket'] }}/v{{ openio_keystone_api_version }}"
-        username: "{{ openio_keystone_admin_user_name }}"
-        password: "{{ openio_keystone_auth_admin_password }}"
-        project_name: "{{ openio_keystone_admin_tenant_name }}"
-        user_domain_name: default
-        project_domain_name: default
+openio_keystone_projects:
+  - name: service
+    domain_id: default
+    roles:
+      - user: swift
+        role: admin
+  - name: demo
+    description: OpenIO demo project
+    domain_id: default
+    roles:
+      - user: demo
+        role: _member_
+      - user: demo
+        role: admin
+...

@@ -1,3 +1,4 @@
+---
 # Copyright 2016, Rackspace US, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,21 +13,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: Ensure uWSGI directory exists
-  file:
-    path: "{{ openio_keystone_uwsgi_config_dir }}"
-    state: directory
-    mode: "0711"
-
 - name: uWSGI configuration
   template:
     src: "keystone-uwsgi.ini.j2"
-    dest: "{{ openio_keystone_uwsgi_config_dir }}/{{ item }}.ini"
+    dest: "{{ openio_keystone_sysconfig_dir }}/keystone-{{ openio_keystone_serviceid }}/{{ item }}.ini"
     mode: "0744"
   with_items: "{{ openio_keystone_wsgi_program_names }}"
-#  notify:
-#    - Manage LB
-#    - Restart uWSGI
+  register: _keystone_conf
 
-#- include: "keystone_init_{{ ansible_service_mgr }}.yml"
-- include: "keystone_init_gridinit.yml"
+- name: restart keystone
+  shell: |
+    gridinit_cmd reload
+    gridinit_cmd restart  {{openio_keystone_namespace}}-keystone-{{openio_keystone_serviceid}}
+  when: _keystone_conf.changed
+...

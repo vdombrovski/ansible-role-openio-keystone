@@ -15,7 +15,8 @@ log_dir = {{ openio_keystone_config_default_log_dir }}
 # recommended, as it presents a security risk), remove
 # `AdminTokenAuthMiddleware` (the `admin_token_auth` filter) from your paste
 # application pipelines (for example, in `keystone-paste.ini`). (string value)
-{{ openio_keystone_config_default_admin_token | default(None) | ternary(openio_keystone_config_default_admin_token,'#admin_token = <None>')}}
+{{ '#admin_token = <None>' if not openio_keystone_config_default_admin_token else 'admin_token = ' + openio_keystone_config_default_admin_token  }}
+
 
 # The base public endpoint URL for Keystone that is advertised to clients
 # (NOTE: this does NOT affect how Keystone listens for connections). Defaults
@@ -139,7 +140,7 @@ log_dir = {{ openio_keystone_config_default_log_dir }}
 # If set to true, the logging level will be set to DEBUG instead of the default
 # INFO level. (boolean value)
 # Note: This option can be changed without restarting.
-{{ openio_keystone_config_default_debug | default(None) | ternary(openio_keystone_config_default_debug,'#debug = false')}}
+{{ '#debug = false' if not openio_keystone_config_default_debug else 'debug = true' }}
 
 # The name of a logging configuration file. This file is appended to any
 # existing logging configuration files. For details about logging configuration
@@ -504,7 +505,8 @@ log_dir = {{ openio_keystone_config_default_log_dir }}
 # environments with a single instance of the server can use the
 # dogpile.cache.memory backend. (string value)
 # Allowed values: oslo_cache.memcache_pool, oslo_cache.dict, dogpile.cache.memcached, dogpile.cache.redis, dogpile.cache.memory, dogpile.cache.null
-{{ openio_keystone_config_cache_backend | default(None) | ternary(openio_keystone_config_cache_backend,'#backend = dogpile.cache.null')}}
+{{ '#backend = dogpile.cache.null' if not openio_keystone_config_cache_backend else 'backend = ' ~ openio_keystone_config_cache_backend  }}
+
 
 # Arguments supplied to the backend module. Specify this option once per
 # argument to be passed to the dogpile.cache backend. Example format:
@@ -517,22 +519,24 @@ log_dir = {{ openio_keystone_config_default_log_dir }}
 #proxies =
 
 # Global toggle for caching. (boolean value)
-{{ openio_keystone_config_cache_enabled | default(None) | ternary(openio_keystone_config_cache_enabled,'#enabled = true')}}
+{{ '#' if not openio_keystone_config_cache_enabled  else '' }}enable = true
 
 # Extra debugging from the cache backend (cache keys, get/set/delete/etc
 # calls). This is only really useful if you need to see the specific cache-
 # backend get/set/delete calls with the keys/values.  Typically this should be
 # left set to false. (boolean value)
-{{ openio_keystone_config_cache_debug_cache_backend | default(None) | ternary(openio_keystone_config_cache_debug_cache_backend,'#debug_cache_backend = false')}}
+{{ '#debug_cache_backend = false' if not openio_keystone_config_cache_debug_cache_backend else 'debug_cache_backend = ' ~ openio_keystone_config_cache_debug_cache_backend  }}
 
 # Memcache servers in the format of "host:port". (dogpile.cache.memcache and
 # oslo_cache.memcache_pool backends only). (list value)
-{{ openio_keystone_config_cache_memcache_servers | default(None) | ternary(openio_keystone_config_cache_memcache_servers,'#memcache_servers = localhost:11211')}}
+# Memcache servers in the format of "host:port". (dogpile.cache.memcache and
+# oslo_cache.memcache_pool backends only). (list value)
+{{ '#memcache_servers = localhost:11211' if not openio_keystone_config_cache_memcache_servers else 'memcache_servers = ' ~ openio_keystone_config_cache_memcache_servers  }}
 
 # Number of seconds memcached server is considered dead before it is tried
 # again. (dogpile.cache.memcache and oslo_cache.memcache_pool backends only).
 # (integer value)
-{{ openio_keystone_config_cache_memcache_dead_retry | default(None) | ternary(openio_keystone_config_cache_memcache_dead_retry,'#memcache_dead_retry = 300')}}
+{{ '#memcache_dead_retry = 300' if not openio_keystone_config_cache_memcache_dead_retry else 'memcache_dead_retry = ' ~ openio_keystone_config_cache_memcache_dead_retry  }}
 
 # Timeout in seconds for every call to a server. (dogpile.cache.memcache and
 # oslo_cache.memcache_pool backends only). (integer value)
