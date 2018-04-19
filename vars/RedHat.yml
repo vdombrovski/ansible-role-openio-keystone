@@ -1,9 +1,0 @@
----
-# vars for ansible-role-openio-keystone
-openio_keystone_packages:
-  - openstack-keystone
-  - uwsgi
-  - uwsgi-plugin-python
-  - python2-shade
-
-openio_keystone_uwsgi_config_dir: /etc/uwsgi.d
