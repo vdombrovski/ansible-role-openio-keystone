@@ -519,7 +519,7 @@ log_dir = {{ openio_keystone_config_default_log_dir }}
 #proxies =
 
 # Global toggle for caching. (boolean value)
-{{ '#' if not openio_keystone_config_cache_enabled  else '' }}enable = true
+{{ '#' if not openio_keystone_config_cache_enabled  else '' }}enabled = true
 
 # Extra debugging from the cache backend (cache keys, get/set/delete/etc
 # calls). This is only really useful if you need to see the specific cache-
