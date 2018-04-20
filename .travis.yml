@@ -7,7 +7,7 @@ sudo: required
 #python: "2.7"
 
 env:
-  globa:
+  global:
     - ANBSIBLE_VERSION=2.5
   matrix:
     - DISTRIBUTION: centos
