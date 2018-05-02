@@ -33,7 +33,8 @@
   with_items: "{{ _dir.results }}"
   when: not item.stat.exists
   tags: install
-- name: 'Install configuration files 1/2'
+
+- name: 'Install configuration files keystone-paste.ini'
   copy:
     src: keystone-paste.ini
     dest: "{{ openio_keystone_config_dir }}/keystone-paste.ini"
@@ -42,7 +43,7 @@
     mode: '0640'
   tags: configure
 
-- name: 'Install configuration files 2/2'
+- name: 'Install configuration files keystone.conf'
   template:
     src: keystone.conf.j2
     dest: "{{ openio_keystone_config_dir }}/keystone.conf"

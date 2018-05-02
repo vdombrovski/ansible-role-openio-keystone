@@ -151,40 +151,40 @@ openio_keystone_projects:
 
 
     - role: keystone
-    openio_keystone_bind_interface: "{{ ansible_default_ipv4.alias }}"
-    openio_keystone_namespace: "{{ namespace }}"
-    openio_keystone_nodes_group: "my_keystones"
-    openio_keystone_config_cache_memcache_servers: "127.0.01:6019"
-    openio_keystone_database_engine: mysql
-    #openio_keystone_database_mysql_connection_user: keystone
-    openio_keystone_database_mysql_connection_password: "{{ keystone_mysql_keystoneuser_password }}"
-    openio_keystone_database_mysql_connection_address: "{{ groups['db'] | map('extract', hostvars, ['ansible_default_ipv4', 'address']) | list | first }}"
-    #openio_keystone_database_mysql_connection_database: keystone
-    openio_keystone_bind_interface: "{{ ansible_default_ipv4.alias }}"
-    #openio_keystone_config_cache_memcache_servers: "127.0.01:6019"
-    openio_keystone_services_to_bootstrap:
-      - name: keystone
-        user: admin
-        password: "{{ keystone_mysql_keystoneuser_password }}"
-        project: admin
-        role: admin
-        regionid: RegionOne
-        # eventually a VIP
-        adminurl: "http://{{ VIP.address }}:35357"
-        publicurl: "http://{{ VIP.address }}:5000"
-        internalurl: "http://{{ VIP.address }}:5000"
-    openio_keystone_services:
-      - name: openio-swift
-        type: object-store
-        description: OpenIO SDS swift proxy
-        endpoint:
+      openio_keystone_bind_interface: "{{ ansible_default_ipv4.alias }}"
+      openio_keystone_namespace: "{{ namespace }}"
+      openio_keystone_nodes_group: "my_keystones"
+      openio_keystone_config_cache_memcache_servers: "127.0.01:6019"
+      openio_keystone_database_engine: mysql
+      #openio_keystone_database_mysql_connection_user: keystone
+      openio_keystone_database_mysql_connection_password: "{{ keystone_mysql_keystoneuser_password }}"
+      openio_keystone_database_mysql_connection_address: "{{ groups['db'] | map('extract', hostvars, ['ansible_default_ipv4', 'address']) | list | first }}"
+      #openio_keystone_database_mysql_connection_database: keystone
+      openio_keystone_bind_interface: "{{ ansible_default_ipv4.alias }}"
+      #openio_keystone_config_cache_memcache_servers: "127.0.01:6019"
+      openio_keystone_services_to_bootstrap:
+        - name: keystone
+          user: admin
+          password: "{{ keystone_mysql_keystoneuser_password }}"
+          project: admin
+          role: admin
+          regionid: RegionOne
           # eventually a VIP
-          - interface: admin
-            url: "http://{{ VIP.address }}:6007/v1/AUTH_%(tenant_id)s"
-          - interface: internal
-            url: "http://{{ VIP.address }}:6007/v1/AUTH_%(tenant_id)s"
-          - interface: public
-            url: "http://{{ VIP.address }}:6007/v1/AUTH_%(tenant_id)s"
+          adminurl: "http://{{ VIP.address }}:35357"
+          publicurl: "http://{{ VIP.address }}:5000"
+          internalurl: "http://{{ VIP.address }}:5000"
+      openio_keystone_services:
+        - name: openio-swift
+          type: object-store
+          description: OpenIO SDS swift proxy
+          endpoint:
+            # eventually a VIP
+            - interface: admin
+              url: "http://{{ VIP.address }}:6007/v1/AUTH_%(tenant_id)s"
+            - interface: internal
+              url: "http://{{ VIP.address }}:6007/v1/AUTH_%(tenant_id)s"
+            - interface: public
+              url: "http://{{ VIP.address }}:6007/v1/AUTH_%(tenant_id)s"
 
 
 
@@ -195,8 +195,6 @@ openio_keystone_projects:
     #  openio_keystone_database_engine: mysql
     #  openio_keystone_database_mysql_connection_user: keystone
     #  openio_keystone_database_mysql_connection_password: keystonepass
-
-
 ```
 
 
