@@ -4,6 +4,8 @@ openio_keystone_namespace: "OPENIO"
 openio_keystone_serviceid: "0"
 
 openio_keystone_bind_interface: "{{ ansible_default_ipv4.alias }}"
+openio_keystone_bind_address:
+  "{{ hostvars[inventory_hostname]['ansible_' + openio_keystone_bind_interface]['ipv4']['address'] }}"
 
 openio_keystone_repo_managed: false
 openio_keystone_openstack_distribution: pike
@@ -14,8 +16,7 @@ openio_keystone_database_sqlite_directory: /var/lib/keystone
 openio_keystone_database_sqlite_file: keystone.db
 openio_keystone_database_mysql_connection_user: keystone
 openio_keystone_database_mysql_connection_password: KEYSTONE_PASS
-openio_keystone_database_mysql_connection_address:
-  "{{ hostvars[inventory_hostname]['ansible_' + openio_keystone_bind_interface]['ipv4']['address'] }}"
+openio_keystone_database_mysql_connection_address: "{{ openio_keystone_bind_address }}"
 openio_keystone_database_mysql_connection_database: keystone
 
 
@@ -79,11 +80,11 @@ openio_keystone_services_to_bootstrap:
     role: admin
     regionid: RegionOne
     adminurl:
-      "http://{{ hostvars[inventory_hostname]['ansible_' + openio_keystone_bind_interface]['ipv4']['address'] }}:35357"
+      "http://{{ openio_keystone_bind_address }}:35357"
     publicurl:
-      "http://{{ hostvars[inventory_hostname]['ansible_' + openio_keystone_bind_interface]['ipv4']['address'] }}:5000"
+      "http://{{ openio_keystone_bind_address }}:5000"
     internalurl:
-      "http://{{ hostvars[inventory_hostname]['ansible_' + openio_keystone_bind_interface]['ipv4']['address'] }}:5000"
+      "http://{{ openio_keystone_bind_address }}:5000"
 
 openio_keystone_cloudname: openio
 openio_keystone_users:
@@ -98,11 +99,11 @@ openio_keystone_services:
     description: OpenIO SDS swift proxy
     endpoint:
       - interface: admin
-        url: "http://{{ hostvars[inventory_hostname]['ansible_' + openio_keystone_bind_interface]['ipv4']['address'] }}:6007/v1/AUTH_%(tenant_id)s"
+        url: "http://{{ openio_keystone_bind_address }}:6007/v1/AUTH_%(tenant_id)s"
       - interface: internal
-        url: "http://{{ hostvars[inventory_hostname]['ansible_' + openio_keystone_bind_interface]['ipv4']['address'] }}:6007/v1/AUTH_%(tenant_id)s"
+        url: "http://{{ openio_keystone_bind_address }}:6007/v1/AUTH_%(tenant_id)s"
       - interface: public
-        url: "http://{{ hostvars[inventory_hostname]['ansible_' + openio_keystone_bind_interface]['ipv4']['address'] }}:6007/v1/AUTH_%(tenant_id)s"
+        url: "http://{{ openio_keystone_bind_address }}:6007/v1/AUTH_%(tenant_id)s"
 
 
 openio_keystone_projects:

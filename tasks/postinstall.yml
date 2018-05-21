@@ -98,4 +98,8 @@
     - endpoint
   run_once: true
   when: add_service is changed
+  register: add_endpoint
+  until: add_endpoint is success
+  retries: 5
+  delay: 10
 ...

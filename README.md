@@ -18,6 +18,7 @@ An Ansible role for keystone. Specifically, the responsibilities of this role ar
 | Variable   | Default | Comments (type)  |
 | :---       | :---    | :---             |
 | `openio_keystone_bind_interface` | `"{{ ansible_default_ipv4.alias }}"` | Name of the NIC to use |
+| `openio_keystone_bind_address` | `"{{ hostvars[inventory_hostname]['ansible_' + openio_keystone_bind_interface]['ipv4']['address'] }}"` | IP address to use |
 | `openio_keystone_bindir` | `/usr/bin` | OpenStack's bin folde |
 | `openio_keystone_bootstrap_all_nodes` | `false` | Bootstrap the first endpoint on all nodes |
 | `openio_keystone_cloudname` | `openio` | The cloud name in the /etc/openstack/clouds.yaml |
