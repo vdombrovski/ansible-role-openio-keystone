@@ -204,6 +204,18 @@ openio_keystone_projects:
 node1 ansible_host=192.168.1.173
 ```
 
+## Troubleshooting
+
+If you encounter problems with the `synchronize` tasks for the fernet tokens,
+like the following example:
+
+```
+fatal: [mars2]: UNREACHABLE! => {"changed": false, "msg": "Authentication or permission failure. In some cases, you may have been able to authenticate and did not have permissions on the target directory. Consider changing the remote tmp path in ansible.cfg to a path rooted in \"/tmp\". Failed command was: ( umask 77 && mkdir -p \"` echo /root/.ansible/tmp/ansible-tmp-1527081553.09-268394055831894 `\" && echo ansible-tmp-1527081553.09-268394055831894=\"` echo /root/.ansible/tmp/ansible-tmp-1527081553.09-268394055831894 `\" ), exited with result 1", "unreachable": true}
+```
+
+You can try to add the following line to your `ansible.cfg`: `remote_tmp=/tmp`
+
+For reference, see this [bug report](https://github.com/ansible/ansible/issues/22639).
 
 ## Contributing
 
