@@ -8,6 +8,7 @@ keystone_packages:
   - python-shade
   - python-cffi
   - python-pip
+  - rsync
 
 #openio_keystone_uwsgi_config_dir: /etc/uwsgi
 openio_keystone_uwsgi_bin: /usr/bin/uwsgi
