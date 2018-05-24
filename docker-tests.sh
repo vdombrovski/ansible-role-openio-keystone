@@ -30,9 +30,6 @@ else
 fi
 readonly requirements="${role_dir}/docker-tests/requirements.yml"
 
-#readonly docker_image="bertvv/ansible-testing"
-#readonly image_tag="${docker_image}:${DISTRIBUTION}_${VERSION}"
-
 readonly docker_image="cdelgehier/docker_images_ansible"
 readonly image_tag="${docker_image}:${ANSIBLE_VERSION}_${DISTRIBUTION}_${VERSION}"
 
@@ -153,7 +150,7 @@ run_syntax_check() {
 
 run_test_playbook() {
   log 'Running playbook'
-  exec_container ansible-playbook "${test_playbook}" --diff 
+  exec_container ansible-playbook "${test_playbook}" --diff
   log 'Run finished'
 }
 
@@ -170,7 +167,7 @@ run_idempotence_test() {
 
   exec_container ansible-playbook "${test_playbook}" --diff 2>&1 | tee "${output}"
 
-  if grep -q 'changed=0.*failed=0' "${output}"; then
+  if grep -q "changed=${NORMALCHANGES:=0}.*failed=0" "${output}"; then
     result='pass'
     return_status=0
   else
@@ -203,4 +200,3 @@ log() {
 #}}}
 
 main "${@}"
-
