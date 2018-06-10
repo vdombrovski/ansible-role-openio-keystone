@@ -29,4 +29,5 @@
   retries: 5
   delay: 10
   tags: skip_ansible_lint
+  no_log: true
 ...
