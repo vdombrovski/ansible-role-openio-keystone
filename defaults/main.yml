@@ -86,7 +86,7 @@ openio_keystone_services_to_bootstrap:
     internalurl:
       "http://{{ openio_keystone_bind_address }}:5000"
 
-openio_keystone_cloudname: "{{ openio_keystone_namespace }}"
+openio_keystone_cloudname: "{{ openio_keystone_namespace | lower }}"
 openio_keystone_users:
   - name: demo
     password: DEMO_PASS
