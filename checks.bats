@@ -5,7 +5,7 @@
 
 # Tests
 #connection_string="--os-username admin --os-project-name admin --os-user-domain-id default --os-project-domain-id default --os-identity-api-version 3 --os-auth-url http://${SUT_IP}:5000 --os-password ADMIN_PASS"
-connection_string="--os-cloud openio"
+connection_string="--os-cloud travis"
 
 @test 'List projects' {
   run bash -c "docker exec -ti ${SUT_ID} openstack ${connection_string} project list --format csv"
