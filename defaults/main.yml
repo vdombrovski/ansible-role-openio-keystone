@@ -32,8 +32,7 @@ openio_keystone_config_default_debug: false
 openio_keystone_config_cache_backend: dogpile.cache.memcached
 openio_keystone_config_cache_enabled: true
 openio_keystone_config_cache_debug_cache_backend: ""
-openio_keystone_config_cache_memcache_servers:
-  "{{ hostvars[inventory_hostname]['ansible_' + openio_keystone_bind_interface]['ipv4']['address'] }}:6019"
+openio_keystone_config_cache_memcache_servers: "{{ openio_keystone_bind_address }}:6019"
 openio_keystone_config_cache_memcache_dead_retry: ""
 
 openio_keystone_database_connection: "{% if openio_keystone_database_engine == 'sqlite' %}\
@@ -60,11 +59,9 @@ openio_keystone_wsgi_public_program_name: keystone-wsgi-public
 openio_keystone_wsgi_admin_program_name: keystone-wsgi-admin
 openio_keystone_uwsgi_bind:
   keystone-wsgi-public:
-    http-socket:
-      "{{ hostvars[inventory_hostname]['ansible_' + openio_keystone_bind_interface]['ipv4']['address'] }}:5000"
+    http-socket: "{{ openio_keystone_bind_address }}:5000"
   keystone-wsgi-admin:
-    http-socket:
-      "{{ hostvars[inventory_hostname]['ansible_' + openio_keystone_bind_interface]['ipv4']['address'] }}:35357"
+    http-socket: "{{ openio_keystone_bind_address }}:35357"
 openio_keystone_wsgi_threads: 1
 openio_keystone_wsgi_processes_max: 16
 openio_keystone_wsgi_processes: "{{ [[ansible_processor_vcpus|default(1), 1] | \
@@ -79,12 +76,9 @@ openio_keystone_services_to_bootstrap:
     project: admin
     role: admin
     regionid: RegionOne
-    adminurl:
-      "http://{{ openio_keystone_bind_address }}:35357"
-    publicurl:
-      "http://{{ openio_keystone_bind_address }}:5000"
-    internalurl:
-      "http://{{ openio_keystone_bind_address }}:5000"
+    adminurl: "http://{{ openio_keystone_bind_address }}:35357"
+    publicurl: "http://{{ openio_keystone_bind_address }}:5000"
+    internalurl: "http://{{ openio_keystone_bind_address }}:5000"
 
 openio_keystone_cloudname: "{{ openio_keystone_namespace | lower }}"
 openio_keystone_users:
