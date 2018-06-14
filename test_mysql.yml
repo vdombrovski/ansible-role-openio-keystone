@@ -39,6 +39,8 @@
 
     - role: repo
     - role: gridinit
+      openio_gridinit_per_ns: true
+      openio_gridinit_namespace: TRAVIS
     - role: role_under_test
       openio_keystone_namespace: TRAVIS
       openio_keystone_nodes_group: keystone
