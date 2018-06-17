@@ -14,8 +14,6 @@
 - hosts: localhost
   become: true
   roles:
-    - role: repo
-    - role: gridinit
     - role: mysql
       mysql_vendor: mysql
       mysql_origin: upstream
