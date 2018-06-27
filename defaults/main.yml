@@ -69,10 +69,11 @@ openio_keystone_wsgi_processes: "{{ [[ansible_processor_vcpus|default(1), 1] | \
 
 # Bootstrap
 openio_keystone_bootstrap_all_nodes: false
+openio_keystone_admin_password: ADMIN_PASS
 openio_keystone_services_to_bootstrap:
   - name: keystone
     user: admin
-    password: ADMIN_PASS
+    password: "{{ openio_keystone_admin_password }}"
     project: admin
     role: admin
     regionid: RegionOne

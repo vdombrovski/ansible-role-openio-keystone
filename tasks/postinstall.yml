@@ -25,7 +25,7 @@
     domain: "{{ item.domain | default('default') }}"
     update_password: on_create
   with_items: "{{ openio_keystone_users }}"
-  run_once: true
+  run_once: "{{ not openio_keystone_bootstrap_all_nodes }}"
   register: add_user
   until: add_user is success
   retries: 5
@@ -41,7 +41,7 @@
     description: "{{ item.description | default(omit) }}"
     domain_id: default
   with_items: "{{ openio_keystone_projects }}"
-  run_once: true
+  run_once: "{{ not openio_keystone_bootstrap_all_nodes }}"
   register: add_proj
   until: add_proj is success
   retries: 5
@@ -57,7 +57,7 @@
   with_subelements:
     - "{{ openio_keystone_projects }}"
     - roles
-  run_once: true
+  run_once: "{{ not openio_keystone_bootstrap_all_nodes }}"
   register: add_role
   until: add_role is success
   retries: 5
@@ -72,7 +72,7 @@
     service_type: "{{ item.type }}"
     description: "{{ item.description | default(omit) }}"
   with_items: "{{ openio_keystone_services }}"
-  run_once: true
+  run_once: "{{ not openio_keystone_bootstrap_all_nodes }}"
   register: add_service
   until: add_service is success
   retries: 5
@@ -89,7 +89,7 @@
 #  with_subelements:
 #    - "{{ openio_keystone_services }}"
 #    - endpoint
-#  run_once: true
+#  run_once: "{{ not openio_keystone_bootstrap_all_nodes }}"
 
 - name: Add endpoint to service
   command: "openstack --os-cloud {{ openio_keystone_cloudname }} endpoint create \
@@ -98,7 +98,7 @@
   with_subelements:
     - "{{ openio_keystone_services }}"
     - endpoint
-  run_once: true
+  run_once: "{{ not openio_keystone_bootstrap_all_nodes }}"
   when: add_service is changed
   register: add_endpoint
   until: add_endpoint is success
