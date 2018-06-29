@@ -65,7 +65,7 @@ openio_keystone_uwsgi_bind:
 openio_keystone_wsgi_threads: 1
 openio_keystone_wsgi_processes_max: 16
 openio_keystone_wsgi_processes: "{{ [[ansible_processor_vcpus|default(1), 1] | \
-  max * 2, openio_keystone_wsgi_processes_max] | min }}"
+  max , openio_keystone_wsgi_processes_max] | min }}"
 
 # Bootstrap
 openio_keystone_bootstrap_all_nodes: false
