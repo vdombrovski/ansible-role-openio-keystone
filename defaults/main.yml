@@ -113,6 +113,4 @@ openio_keystone_projects:
     roles:
       - user: demo
         role: _member_
-      - user: demo
-        role: admin
 ...
