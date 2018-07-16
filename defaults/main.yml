@@ -76,7 +76,7 @@ openio_keystone_services_to_bootstrap:
     password: "{{ openio_keystone_admin_password }}"
     project: admin
     role: admin
-    regionid: RegionOne
+    regionid: "us-east-1"
     adminurl: "http://{{ openio_keystone_bind_address }}:35357"
     publicurl: "http://{{ openio_keystone_bind_address }}:5000"
     internalurl: "http://{{ openio_keystone_bind_address }}:5000"

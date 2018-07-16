@@ -85,7 +85,7 @@
 #    service: "{{ item.0.name }}"
 #    endpoint_interface: "{{ item.1.interface }}"
 #    url: "{{ item.1.url }}"
-#    region: "{{ item.0.region_name | default('RegionOne') }}"
+#    region: "{{ item.0.region_name | default('us-east-1') }}"
 #  with_subelements:
 #    - "{{ openio_keystone_services }}"
 #    - endpoint
@@ -93,7 +93,7 @@
 
 - name: Add endpoint to service
   command: "openstack --os-cloud {{ openio_keystone_cloudname }} endpoint create \
-              --region {{ item.0.region | default('RegionOne') }} \
+              --region {{ item.0.region | default('us-east-1') }} \
               {{ item.0.name }} {{ item.1.interface }} '{{ item.1.url }}'"
   with_subelements:
     - "{{ openio_keystone_services }}"

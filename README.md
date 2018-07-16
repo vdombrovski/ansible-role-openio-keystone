@@ -169,7 +169,7 @@ openio_keystone_projects:
           password: "{{ keystone_mysql_keystoneuser_password }}"
           project: admin
           role: admin
-          regionid: RegionOne
+          regionid: "us-east-1"
           # eventually a VIP
           adminurl: "http://{{ VIP.address }}:35357"
           publicurl: "http://{{ VIP.address }}:5000"
