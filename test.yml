@@ -29,7 +29,7 @@
           password: TRAVIS_PASS
           project: admin
           role: admin
-          regionid: RegionOne
+          regionid: "us-east-1"
           # eventually a VIP
           adminurl: "http://172.17.0.2:35357"
           publicurl: "http://172.17.0.2:5000"

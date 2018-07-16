@@ -21,9 +21,9 @@ connection_string="--os-cloud travis"
   echo "output: "$output
   echo "status: "$status
   [[ "${status}" -eq "0" ]]
-  [[ "${output}" =~ '"RegionOne","keystone","identity",True,"admin"' ]]
-  [[ "${output}" =~ '"RegionOne","openio-swift","object-store",True,"admin"' ]]
-  [[ "${output}" =~ '"RegionOne","openio-swift","object-store",True,"public"' ]]
+  [[ "${output}" =~ '"us-east-1","keystone","identity",True,"admin"' ]]
+  [[ "${output}" =~ '"us-east-1","openio-swift","object-store",True,"admin"' ]]
+  [[ "${output}" =~ '"us-east-1","openio-swift","object-store",True,"public"' ]]
 }
 
 
