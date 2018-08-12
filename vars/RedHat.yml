@@ -7,6 +7,7 @@ keystone_packages:
   - uwsgi-plugin-python
   - python2-shade
   - rsync
+  - python-openstackclient
 
 openio_keystone_uwsgi_bin: /sbin/uwsgi
 ...

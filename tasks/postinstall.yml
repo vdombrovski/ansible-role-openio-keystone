@@ -47,6 +47,21 @@
   retries: 5
   delay: 10
 
+- name: Create roles
+  command: "openstack --os-cloud {{ openio_keystone_cloudname }} \
+    role create {{ item.1.role }}"
+  with_subelements:
+    - "{{ openio_keystone_projects }}"
+    - roles
+  run_once: "{{ not openio_keystone_bootstrap_all_nodes }}"
+  register: create_role
+  changed_when: create_role.rc == 0
+  failed_when:
+    - create_role.rc != 0
+    - not 'Duplicate entry found with name' in create_role.stderr
+  until: create_role is success
+  retries: 5
+  delay: 10
 
 - name: Add roles to projects
   os_user_role:

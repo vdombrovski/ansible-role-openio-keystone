@@ -9,6 +9,7 @@ keystone_packages:
   - python-cffi
   - python-pip
   - rsync
+  - python-openstackclient
 
 #openio_keystone_uwsgi_config_dir: /etc/uwsgi
 openio_keystone_uwsgi_bin: /usr/bin/uwsgi
