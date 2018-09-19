@@ -4,7 +4,7 @@
 keystone_packages:
   - openstack-keystone
   - uwsgi
-  - uwsgi-plugin-python
+  - uwsgi-plugin-python2
   - python2-shade
   - rsync
   - python-openstackclient
