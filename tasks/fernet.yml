@@ -10,6 +10,7 @@
     dest: "{{ openio_keystone_tmp_keys_dir }}/fernet-keys/"
     archive: "yes"
     delete: "yes"
+    use_ssh_args: "yes"
   when: inventory_hostname == groups[openio_keystone_nodes_group][0]
   changed_when: false
 
@@ -20,6 +21,7 @@
     dest: "{{ openio_keystone_fernet_tokens_key_repository }}"
     archive: "yes"
     delete: "yes"
+    use_ssh_args: "yes"
   when: inventory_hostname != groups[openio_keystone_nodes_group][0]
 
 - name: Reset fernet keys ownership
