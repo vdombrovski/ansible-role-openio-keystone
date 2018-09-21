@@ -15,5 +15,6 @@
 - name: Upgrade python-shade
   pip:
     name: shade
-    state: latest
+    state: present
+    version: '1.22.2'
 ...
