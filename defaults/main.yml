@@ -113,4 +113,6 @@ openio_keystone_projects:
     roles:
       - user: demo
         role: _member_
+
+openio_keystone_no_log: true
 ...

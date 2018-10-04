@@ -43,6 +43,7 @@ An Ansible role for keystone. Specifically, the responsibilities of this role ar
 | `openio_keystone_gridinit_dir` | `"/etc/gridinit.d/{{ openio_keystone_namespace }}"` | Path to copy the gridinit conf |
 | `openio_keystone_gridinit_file_prefix` | `""` | Maybe set it to `{{ openio_keystone_namespace }}-` for old gridinit's style |
 | `openio_keystone_namespace` | `"OPENIO"` | Namespace |
+| `openio_keystone_no_log` | `true` | For sensible output |
 | `openio_keystone_nodes_group` | `openio_keystone` | Groupname in your inventory |
 | `openio_keystone_openstack_distribution` | `pike` | Release of OpenStack |
 | `openio_keystone_projects` | `` | `dict` of projects to declare |

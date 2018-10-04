@@ -13,7 +13,7 @@
     owner: root
     group: root
     mode: 0400
-  no_log: true
+  no_log: "{{ openio_keystone_no_log }}"
 
 - name: Users creation
   os_user:
@@ -30,7 +30,7 @@
   until: add_user is success
   retries: 5
   delay: 10
-  no_log: true
+  no_log: "{{ openio_keystone_no_log }}"
 
 
 - name: Projects creation
