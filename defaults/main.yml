@@ -2,6 +2,7 @@
 ---
 openio_keystone_namespace: "OPENIO"
 openio_keystone_serviceid: "0"
+openio_keystone_provision_only: false
 
 openio_keystone_bind_interface: "{{ ansible_default_ipv4.alias }}"
 openio_keystone_bind_address:

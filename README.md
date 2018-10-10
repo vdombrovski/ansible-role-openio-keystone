@@ -63,7 +63,7 @@ An Ansible role for keystone. Specifically, the responsibilities of this role ar
 | `openio_keystone_wsgi_program_names` | `` | WSGI endpoint to run |
 | `openio_keystone_wsgi_public_program_name` | `keystone-wsgi-public` |  |
 | `openio_keystone_wsgi_threads` | `1` | |
-
+| `openio_keystone_provision_only` | `false` | Provision only without restarting / bootstrapping |
 
 ### User & project
 
