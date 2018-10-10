@@ -54,6 +54,7 @@
 
 - import_tasks: db_setup.yml
   tags: configure
+  when: not openio_keystone_provision_only
 
 - import_tasks: fernet.yml
   when:
@@ -83,11 +84,14 @@
     gridinit_cmd reload
     gridinit_cmd restart  {{openio_keystone_namespace}}-keystone-{{openio_keystone_serviceid}}.0
     gridinit_cmd restart  {{openio_keystone_namespace}}-keystone-{{openio_keystone_serviceid}}.1
-  when: _uwsgi_conf.changed or  _gridinit_conf.changed
+  when:
+    - _uwsgi_conf.changed or _gridinit_conf.changed
+    - not openio_keystone_provision_only
 
 - import_tasks: bootstrap.yml
   when:
-    - _db_sync_check.rc | int == 2
+    - not openio_keystone_provision_only
+    - _db_sync_check.rc is defined and _db_sync_check.rc | int == 2
     - "(not openio_keystone_bootstrap_all_nodes and inventory_hostname == groups[openio_keystone_nodes_group][0]) \
       or openio_keystone_bootstrap_all_nodes"
   tags: configure
@@ -95,4 +99,7 @@
 - import_tasks: postinstall.yml
   tags: configure
 
+- import_tasks: identities_create.yml
+  tags: configure
+  when: not openio_keystone_provision_only
 ...

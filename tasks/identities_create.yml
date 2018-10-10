@@ -1,0 +1,106 @@
+---
+- name: Users creation
+  os_user:
+    cloud: "{{ openio_keystone_cloudname }}"
+    state: present
+    name: "{{ item.name }}"
+    password: "{{ item.password }}"
+    email: "{{ item.email | default(omit) }}"
+    domain: "{{ item.domain | default('default') }}"
+    update_password: on_create
+  with_items: "{{ openio_keystone_users }}"
+  run_once: "{{ not openio_keystone_bootstrap_all_nodes }}"
+  register: add_user
+  until: add_user is success
+  retries: 5
+  delay: 10
+  no_log: "{{ openio_keystone_no_log }}"
+
+
+- name: Projects creation
+  os_project:
+    cloud: "{{ openio_keystone_cloudname }}"
+    state: present
+    name: "{{ item.name }}"
+    description: "{{ item.description | default(omit) }}"
+    domain_id: default
+  with_items: "{{ openio_keystone_projects }}"
+  run_once: "{{ not openio_keystone_bootstrap_all_nodes }}"
+  register: add_proj
+  until: add_proj is success
+  retries: 5
+  delay: 10
+
+- name: Create roles
+  command: "openstack --os-cloud {{ openio_keystone_cloudname }} \
+    role create {{ item.1.role }}"
+  with_subelements:
+    - "{{ openio_keystone_projects }}"
+    - roles
+  run_once: "{{ not openio_keystone_bootstrap_all_nodes }}"
+  register: create_role
+  changed_when: create_role.rc == 0
+  failed_when:
+    - create_role.rc != 0
+    - not 'Duplicate entry found with name' in create_role.stderr
+  until: create_role is success
+  retries: 5
+  delay: 10
+
+- name: Add roles to projects
+  os_user_role:
+    cloud: "{{ openio_keystone_cloudname }}"
+    project: "{{ item.0.name }}"
+    user: "{{ item.1.user }}"
+    role: "{{ item.1.role }}"
+  with_subelements:
+    - "{{ openio_keystone_projects }}"
+    - roles
+  run_once: "{{ not openio_keystone_bootstrap_all_nodes }}"
+  register: add_role
+  until: add_role is success
+  retries: 5
+  delay: 10
+
+
+- name: Declare a service
+  os_keystone_service:
+    cloud: "{{ openio_keystone_cloudname }}"
+    state: present
+    name: "{{ item.name }}"
+    service_type: "{{ item.type }}"
+    description: "{{ item.description | default(omit) }}"
+  with_items: "{{ openio_keystone_services }}"
+  run_once: "{{ not openio_keystone_bootstrap_all_nodes }}"
+  register: add_service
+  until: add_service is success
+  retries: 5
+  delay: 10
+
+
+#- name: Add endpoint to service
+#  os_keystone_endpoint:
+#    cloud: "{{ openio_keystone_cloudname }}"
+#    service: "{{ item.0.name }}"
+#    endpoint_interface: "{{ item.1.interface }}"
+#    url: "{{ item.1.url }}"
+#    region: "{{ item.0.region_name | default('us-east-1') }}"
+#  with_subelements:
+#    - "{{ openio_keystone_services }}"
+#    - endpoint
+#  run_once: "{{ not openio_keystone_bootstrap_all_nodes }}"
+
+- name: Add endpoint to service
+  command: "openstack --os-cloud {{ openio_keystone_cloudname }} endpoint create \
+              --region {{ item.0.region | default('us-east-1') }} \
+              {{ item.0.name }} {{ item.1.interface }} '{{ item.1.url }}'"
+  with_subelements:
+    - "{{ openio_keystone_services }}"
+    - endpoint
+  run_once: "{{ not openio_keystone_bootstrap_all_nodes }}"
+  when: add_service is changed
+  register: add_endpoint
+  until: add_endpoint is success
+  retries: 5
+  delay: 10
+...
