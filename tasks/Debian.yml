@@ -11,6 +11,7 @@
   with_items: "{{ keystone_packages }}"
   loop_control:
     loop_var: pkg
+  ignore_errors: "{{ ansible_check_mode }}"
 
 - name: Upgrade python-shade
   pip:

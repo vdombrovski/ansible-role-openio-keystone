@@ -13,6 +13,7 @@
     use_ssh_args: "yes"
   when: inventory_hostname == groups[openio_keystone_nodes_group][0]
   changed_when: false
+  ignore_errors: "{{ ansible_check_mode }}"
 
 - name: Copying fernet keys to all keystone hosts
   synchronize:

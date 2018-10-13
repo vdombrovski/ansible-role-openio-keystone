@@ -30,16 +30,19 @@
   run_once: "{{ not openio_keystone_bootstrap_all_nodes }}"
   when:
     - _db_sync_check.rc | int == 2
+  ignore_errors: "{{ ansible_check_mode }}"
 
 - name: Perform a Keystone DB sync migrate
   command: "{{ openio_keystone_bindir }}/keystone-manage db_sync --migrate"
   run_once: "{{ not openio_keystone_bootstrap_all_nodes }}"
   when:
     - _db_sync_check.rc | int in [2, 3]
+  ignore_errors: "{{ ansible_check_mode }}"
 
 - name: Perform a Keystone DB sync contract
   command: "{{ openio_keystone_bindir }}/keystone-manage db_sync --contract"
   run_once: "{{ not openio_keystone_bootstrap_all_nodes }}"
   when:
     - _db_sync_check.rc | int in [2, 3, 4]
+  ignore_errors: "{{ ansible_check_mode }}"
 ...

@@ -30,6 +30,7 @@
   until: add_proj is success
   retries: 5
   delay: 10
+  ignore_errors: "{{ ansible_check_mode }}"
 
 - name: Create roles
   command: "openstack --os-cloud {{ openio_keystone_cloudname }} \
@@ -61,7 +62,7 @@
   until: add_role is success
   retries: 5
   delay: 10
-
+  ignore_errors: "{{ ansible_check_mode }}"
 
 - name: Declare a service
   os_keystone_service:
@@ -76,7 +77,7 @@
   until: add_service is success
   retries: 5
   delay: 10
-
+  ignore_errors: "{{ ansible_check_mode }}"
 
 #- name: Add endpoint to service
 #  os_keystone_endpoint:
@@ -103,4 +104,5 @@
   until: add_endpoint is success
   retries: 5
   delay: 10
+  ignore_errors: "{{ ansible_check_mode }}"
 ...
