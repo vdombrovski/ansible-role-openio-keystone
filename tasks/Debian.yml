@@ -12,10 +12,18 @@
   loop_control:
     loop_var: pkg
   ignore_errors: "{{ ansible_check_mode }}"
+  register: install_packages
+  until: install_packages is success
+  retries: 5
+  delay: 2
 
 - name: Upgrade python-shade
   pip:
     name: shade
     state: present
     version: '1.22.2'
+  register: install_packages_shade
+  until: install_packages_shade is success
+  retries: 5
+  delay: 2
 ...
