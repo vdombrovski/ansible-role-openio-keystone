@@ -26,4 +26,5 @@
   until: install_packages_shade is success
   retries: 5
   delay: 2
+  ignore_errors: "{{ ansible_check_mode }}"
 ...
