@@ -6,7 +6,7 @@ clouds:
       username: admin
       project_name: admin
       password: {{ openio_keystone_services_to_bootstrap | selectattr('name', 'match', '^keystone$') | map(attribute='password') | list | first }}
-      auth_url: {{ openio_keystone_services_to_bootstrap | selectattr('name', 'match', '^keystone$') | map(attribute='publicurl') | list | first }}/v3/
+      auth_url: {{ openio_keystone_services_to_bootstrap | selectattr('name', 'match', '^keystone$') | map(attribute='publicurl') | list | first }}
       user_domain_name: Default
       project_domain_name: Default
     identity_api_version: 3
