@@ -126,6 +126,7 @@ openio_keystone_projects:
   become: true
   roles:
     - role: repository
+    - role: users
     - role: gridinit
     - role: memcached
       openio_memcached_namespace: "{{ namespace }}"

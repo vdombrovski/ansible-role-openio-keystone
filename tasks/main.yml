@@ -14,24 +14,16 @@
     - "{{ ansible_os_family }}.yml"
   tags: install
 
-- name: Test directories presence
-  stat:
-    path: "{{ item }}"
-  register: _dir
-  with_items:
-    - "/etc/gridinit.d/{{ openio_keystone_namespace }}"
-    - "{{ openio_keystone_sysconfig_dir }}/keystone-{{ openio_keystone_serviceid }}"
-
 - name: Ensure directories exists
   file:
-    path: "{{ item.item }}"
+    path: "{{ item.path }}"
     state: directory
-    owner: openio
-    group: openio
-    mode: 0755
-    recurse: true
-  with_items: "{{ _dir.results }}"
-  when: not item.stat.exists
+    owner: "{{ item.owner | default('openio') }}"
+    group: "{{ item.group | default('openio') }}"
+    mode: "{{ item.mode | default(0755) }}"
+  with_items:
+    - path: "/etc/gridinit.d/{{ openio_keystone_namespace }}"
+    - path: "{{ openio_keystone_sysconfig_dir }}/keystone-{{ openio_keystone_serviceid }}"
   tags: install
 
 - name: 'Install configuration files keystone-paste.ini'
