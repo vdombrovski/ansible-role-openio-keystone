@@ -25,5 +25,7 @@
   shell: |
     gridinit_cmd reload
     gridinit_cmd restart  {{openio_keystone_namespace}}-keystone-{{openio_keystone_serviceid}}
-  when: _keystone_conf.changed
+  when:
+    - _keystone_conf.changed
+    - not openio_keystone_provision_only
 ...
