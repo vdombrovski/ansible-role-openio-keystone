@@ -17,6 +17,11 @@
   retries: 5
   delay: 2
 
+- name: Remove default keystone service
+  file:
+    path: /etc/apache2/sites-enabled/keystone.conf
+    state: absent
+
 - name: Upgrade python-shade
   pip:
     name: shade
