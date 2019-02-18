@@ -14,4 +14,12 @@
     group: root
     mode: 0400
   no_log: "{{ openio_keystone_no_log }}"
+
+- name: 'Install configuration logrotate files'
+  template:
+    src: openstack-keystone.conf.j2
+    dest: "/etc/logrotate.d/openstack-keystone"
+    owner: root
+    group: root
+    mode: '0644'
 ...
