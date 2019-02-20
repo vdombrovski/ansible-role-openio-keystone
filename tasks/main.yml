@@ -23,7 +23,7 @@
     mode: "{{ item.mode | default(0755) }}"
   with_items:
     - path: "/etc/gridinit.d/{{ openio_keystone_namespace }}"
-    - path: "{{ openio_keystone_sysconfig_dir }}/keystone-{{ openio_keystone_serviceid }}"
+    - path: "{{ openio_keystone_sysconfig_dir }}/keystone-{{ openio_keystone_serviceid }}"
   tags: install
 
 - name: 'Install configuration files keystone-paste.ini'
@@ -57,7 +57,7 @@
 - name: Generate configuration files (uwsgi)
   template:
     src: "keystone-uwsgi.ini.j2"
-    dest: "{{ openio_keystone_sysconfig_dir }}/keystone-{{ openio_keystone_serviceid }}/{{ item }}.ini"
+    dest: "{{ openio_keystone_sysconfig_dir }}/keystone-{{ openio_keystone_serviceid }}/{{ item }}.ini"
     mode: "0644"
   with_items: "{{ openio_keystone_wsgi_program_names }}"
   register: _uwsgi_conf
