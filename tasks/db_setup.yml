@@ -21,7 +21,7 @@
 - name: Check current state of Keystone DB
   command: "{{ openio_keystone_bindir }}/keystone-manage db_sync --check"
   register: _db_sync_check
-  failed_when: "_db_sync_check.rc == 1"
+  failed_when: "_db_sync_check.rc | int == 1"
   changed_when: false
   run_once: "{{ not openio_keystone_bootstrap_all_nodes }}"
 
