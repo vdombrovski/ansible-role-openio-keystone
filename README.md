@@ -88,7 +88,7 @@ openio_keystone_services:
     description: OpenIO SDS swift proxy
     endpoint:
       - interface: admin
-        url: "http://foo.com:6007/v1/AUTH_%(tenant_id)s"
+        url: "http://foo.com:6007"
       - interface: internal
         url: "http://foo.com:6007/v1/AUTH_%(tenant_id)s"
       - interface: public
