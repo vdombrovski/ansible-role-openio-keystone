@@ -1,25 +1,32 @@
 # roles/keystone/defaults/main.yml
 ---
-openio_keystone_namespace: "OPENIO"
-openio_keystone_serviceid: "0"
+openio_keystone_namespace: "{{ namespace | default('OPENIO') }}"
+openio_keystone_serviceid: "{{ 0 + openio_legacy_serviceid | d(0) | int }}"
 openio_keystone_provision_only: false
 
 openio_keystone_bind_interface: "{{ ansible_default_ipv4.alias }}"
-openio_keystone_bind_address:
-  "{{ hostvars[inventory_hostname]['ansible_' + openio_keystone_bind_interface]['ipv4']['address'] }}"
+openio_keystone_bind_address: "{{ openio_bind_address \
+  | default(hostvars[inventory_hostname]['ansible_' + openio_keystone_bind_interface]['ipv4']['address']) }}"
 
 openio_keystone_repo_managed: false
-openio_keystone_openstack_distribution: pike
-openio_keystone_nodes_group: openio_keystone
+openio_keystone_openstack_distribution: queens
+openio_keystone_nodes_group: keystone
+openio_keystone_db_nodes_group: galera
 
-openio_keystone_database_engine: sqlite
+openio_keystone_database_engine: mysql
 openio_keystone_database_sqlite_directory: /var/lib/keystone
 openio_keystone_database_sqlite_file: keystone.db
 openio_keystone_database_mysql_connection_user: keystone
-openio_keystone_database_mysql_connection_password: KEYSTONE_PASS
-openio_keystone_database_mysql_connection_address: "{{ openio_keystone_bind_address }}"
+openio_keystone_database_mysql_connection_password: "{{ openio_database_keystone_password | d('KEYSTONE_PASS') }}"
+openio_keystone_database_mysql_connection_address: "{% if openio_keystone_db_nodes_group in group_names -%}\
+  {{ openio_bind_address }}
+  {%- elif openio_keystone_db_nodes_group in groups -%}
+  {{ groups[openio_keystone_db_nodes_group] | map('extract', hostvars, ['openio_bind_address'])\
+  | list | random }}
+  {%- else -%}
+  {{ openio_keystone_bind_address }}
+  {%- endif %}"
 openio_keystone_database_mysql_connection_database: keystone
-
 
 openio_keystone_bindir: /usr/bin
 openio_keystone_system_user_name: keystone
@@ -33,7 +40,13 @@ openio_keystone_config_default_debug: false
 openio_keystone_config_cache_backend: dogpile.cache.memcached
 openio_keystone_config_cache_enabled: true
 openio_keystone_config_cache_debug_cache_backend: ""
-openio_keystone_config_cache_memcache_servers: "{{ openio_keystone_bind_address }}:6019"
+openio_keystone_config_cache_memcache_servers: "{% if openio_keystone_nodes_group in groups -%}
+  {{ groups[openio_keystone_nodes_group]
+    | map('extract', hostvars, ['openio_bind_address'])
+    | map('regex_replace', '$', ':6019') | join(',') }}
+  {%- else -%}
+  {{ openio_keystone_bind_address }}:6019
+  {%- endif %}"
 openio_keystone_config_cache_memcache_dead_retry: ""
 
 openio_keystone_database_connection: "{% if openio_keystone_database_engine == 'sqlite' %}\
@@ -77,17 +90,17 @@ openio_keystone_services_to_bootstrap:
     password: "{{ openio_keystone_admin_password }}"
     project: admin
     role: admin
-    regionid: "us-east-1"
-    adminurl: "http://{{ openio_keystone_bind_address }}:35357"
-    publicurl: "http://{{ openio_keystone_bind_address }}:5000"
-    internalurl: "http://{{ openio_keystone_bind_address }}:5000"
+    regionid: "{{ openio_s3_region | d('us-east-1') }}"
+    adminurl: "http://{{ openio_bind_virtual_address | d(openio_keystone_bind_address) }}:35357"
+    publicurl: "http://{{ openio_bind_virtual_address | d(openio_keystone_bind_address) }}:5000"
+    internalurl: "http://{{ openio_bind_virtual_address | d(openio_keystone_bind_address) }}:5000"
 
 openio_keystone_cloudname: "{{ openio_keystone_namespace | lower }}"
 openio_keystone_users:
   - name: demo
-    password: DEMO_PASS
+    password: "{{ openio_keystone_demo_password | d('DEMO_PASS') }}"
   - name: swift
-    password: SWIFT_PASS
+    password: "{{ openio_keystone_swift_password | d('SWIFT_PASS') }}"
 
 openio_keystone_services:
   - name: openio-swift
@@ -95,11 +108,11 @@ openio_keystone_services:
     description: OpenIO SDS swift proxy
     endpoint:
       - interface: admin
-        url: "http://{{ openio_keystone_bind_address }}:6007"
+        url: "http://{{ openio_bind_virtual_address | d(openio_keystone_bind_address) }}:6007"
       - interface: internal
-        url: "http://{{ openio_keystone_bind_address }}:6007/v1/AUTH_%(tenant_id)s"
+        url: "http://{{ openio_bind_virtual_address | d(openio_keystone_bind_address) }}:6007/v1/AUTH_%(tenant_id)s"
       - interface: public
-        url: "http://{{ openio_keystone_bind_address }}:6007/v1/AUTH_%(tenant_id)s"
+        url: "http://{{ openio_bind_virtual_address | d(openio_keystone_bind_address) }}:6007/v1/AUTH_%(tenant_id)s"
 
 
 openio_keystone_projects:
@@ -115,5 +128,5 @@ openio_keystone_projects:
       - user: demo
         role: _member_
 
-openio_keystone_no_log: true
+openio_keystone_no_log: "{{ openio_no_log | d(true) }}"
 ...

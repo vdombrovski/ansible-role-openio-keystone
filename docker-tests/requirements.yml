@@ -1,0 +1,18 @@
+---
+- src: https://github.com/open-io/ansible-role-openio-users.git
+  version: master
+  name: users
+
+- src: https://github.com/open-io/ansible-role-openio-gridinit.git
+  version: master
+  name: gridinit
+
+- src: https://github.com/open-io/ansible-role-openio-repository.git
+  version: master
+  name: repo
+
+#- src: https://github.com/cdelgehier/ansible-role-mariadb.git
+- src: https://github.com/cdelgehier/ansible-role-mysql.git
+  version: master
+  name: mysql
+...

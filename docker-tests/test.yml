@@ -1,0 +1,57 @@
+# Test playbook
+---
+- name: generate docker keystone group
+  hosts: all
+  gather_facts: false
+  tasks:
+    - add_host:
+        name: localhost
+        groups: keystone
+      delegate_to: localhost
+      run_once: true
+      changed_when: false
+
+- hosts: localhost
+  become: true
+  roles:
+    - role: users
+    - role: repo
+      openio_repository_openstack_release: 'queens'
+      openio_repository_no_log: false
+      openio_repository_products:
+        sds:
+          release: "18.10"
+    - role: gridinit
+      openio_gridinit_per_ns: true
+      openio_gridinit_namespace: TRAVIS
+    - role: role_under_test
+      openio_keystone_namespace: TRAVIS
+      openio_keystone_nodes_group: keystone
+      openio_keystone_no_log: false
+      openio_keystone_database_engine: sqlite
+      openio_keystone_bind_interface: "{{ ansible_default_ipv4.alias }}"
+      openio_keystone_config_cache_memcache_servers: "{{ openio_keystone_bind_address }}:6019"
+      openio_keystone_services_to_bootstrap:
+        - name: keystone
+          user: admin
+          password: TRAVIS_PASS
+          project: admin
+          role: admin
+          regionid: "us-east-1"
+          # eventually a VIP
+          adminurl: "http://172.17.0.2:35357"
+          publicurl: "http://172.17.0.2:5000"
+          internalurl: "http://172.17.0.2:5000"
+      openio_keystone_services:
+        - name: openio-swift
+          type: object-store
+          description: OpenIO SDS swift proxy
+          endpoint:
+            # eventually a VIP
+            - interface: admin
+              url: "http://172.17.0.2:6007/v1/AUTH_%(tenant_id)s"
+            - interface: internal
+              url: "http://172.17.0.2:6007/v1/AUTH_%(tenant_id)s"
+            - interface: public
+              url: "http://172.17.0.2:6007/v1/AUTH_%(tenant_id)s"
+...
