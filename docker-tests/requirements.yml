@@ -1,14 +1,14 @@
 ---
 - src: https://github.com/open-io/ansible-role-openio-users.git
-  version: master
+  version: "19.04"
   name: users
 
 - src: https://github.com/open-io/ansible-role-openio-gridinit.git
-  version: master
+  version: "19.04"
   name: gridinit
 
 - src: https://github.com/open-io/ansible-role-openio-repository.git
-  version: master
+  version: "19.04"
   name: repo
 
 #- src: https://github.com/cdelgehier/ansible-role-mariadb.git
