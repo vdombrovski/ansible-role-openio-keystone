@@ -74,11 +74,24 @@
 - name: restart keystone
   shell: |
     gridinit_cmd reload
-    gridinit_cmd restart  {{openio_keystone_namespace}}-keystone-{{openio_keystone_serviceid}}.0
-    gridinit_cmd restart  {{openio_keystone_namespace}}-keystone-{{openio_keystone_serviceid}}.1
+    gridinit_cmd restart  {{ openio_keystone_namespace }}-{{ openio_keystone_servicename }}.0
+    gridinit_cmd restart  {{ openio_keystone_namespace }}-{{ openio_keystone_servicename }}.1
+  register: _restart_keystone
   when:
-    - _uwsgi_conf.changed or _gridinit_conf.changed
+    - _uwsgi_conf is changed or _gridinit_conf is changed
     - not openio_keystone_provision_only
+
+- block:
+    - name: "Ensure keystone is started"
+      command: "gridinit_cmd start {{ openio_keystone_namespace }}-{{ openio_keystone_servicename }}.0 \
+        {{ openio_keystone_namespace }}-{{ openio_keystone_servicename }}.1"
+      register: _start_keystone
+      changed_when: '"Success" in _start_keystone.stdout'
+      when:
+        - not openio_keystone_provision_only
+        - _restart_keystone is skipped
+      tags: configure
+  when: openio_bootstrap | d(false)
 
 - import_tasks: bootstrap.yml
   when:
