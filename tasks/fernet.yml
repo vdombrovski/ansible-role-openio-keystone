@@ -1,6 +1,7 @@
 ---
 - import_tasks: fernet_keys_create.yml
   when: inventory_hostname == groups[openio_keystone_nodes_group][0]
+  tags: configure
 
 # Synchronize Fernet on all nodes
 - name: fetch fernet tokens locally
@@ -14,6 +15,7 @@
   when: inventory_hostname == groups[openio_keystone_nodes_group][0]
   changed_when: false
   ignore_errors: "{{ ansible_check_mode }}"
+  tags: configure
 
 - name: Copying fernet keys to all keystone hosts
   synchronize:
@@ -24,6 +26,7 @@
     delete: "yes"
     use_ssh_args: "yes"
   when: inventory_hostname != groups[openio_keystone_nodes_group][0]
+  tags: configure
 
 - name: Reset fernet keys ownership
   file:
@@ -32,4 +35,5 @@
     group: "{{ openio_keystone_system_group_name }}"
     state: directory
     recurse: "yes"
+  tags: configure
 ...

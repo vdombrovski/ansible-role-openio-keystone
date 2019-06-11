@@ -5,6 +5,7 @@
     state: directory
     owner: root
     group: root
+  tags: configure
 
 - name: Adding clouds.yaml for os-client-config for further actions
   template:
@@ -14,6 +15,7 @@
     group: root
     mode: 0400
   no_log: "{{ openio_keystone_no_log }}"
+  tags: configure
 
 - name: 'Install configuration logrotate files'
   template:
@@ -22,4 +24,5 @@
     owner: root
     group: root
     mode: '0644'
+  tags: configure
 ...

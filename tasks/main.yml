@@ -5,7 +5,9 @@
   with_first_found:
     - "{{ ansible_distribution }}.yml"
     - "{{ ansible_os_family }}.yml"
-  tags: install
+  tags:
+    - install
+    - configure
 
 - name: "Include {{ ansible_distribution }} tasks"
   include_tasks: "{{ item }}"
@@ -24,7 +26,7 @@
   with_items:
     - path: "/etc/gridinit.d/{{ openio_keystone_namespace }}"
     - path: "{{ openio_keystone_sysconfig_dir }}/keystone-{{ openio_keystone_serviceid }}"
-  tags: install
+  tags: configure
 
 - name: 'Install configuration files keystone-paste.ini'
   copy:
@@ -49,10 +51,12 @@
   when: not openio_keystone_provision_only
 
 - import_tasks: fernet.yml
+  tags: configure
   when:
     - "'fernet' in openio_keystone_token_provider"
 
 - import_tasks: credentials.yml
+  tags: configure
 
 - name: Generate configuration files (uwsgi)
   template:
@@ -61,6 +65,7 @@
     mode: "0644"
   with_items: "{{ openio_keystone_wsgi_program_names }}"
   register: _uwsgi_conf
+  tags: configure
 
 - name: Generate configuration files (gridinit)
   template:
@@ -70,6 +75,7 @@
     mode: "0644"
   with_indexed_items: "{{ openio_keystone_wsgi_program_names }}"
   register: _gridinit_conf
+  tags: configure
 
 - name: restart keystone
   shell: |
@@ -77,6 +83,7 @@
     gridinit_cmd restart  {{ openio_keystone_namespace }}-{{ openio_keystone_servicename }}.0
     gridinit_cmd restart  {{ openio_keystone_namespace }}-{{ openio_keystone_servicename }}.1
   register: _restart_keystone
+  tags: configure
   when:
     - _uwsgi_conf is changed or _gridinit_conf is changed
     - not openio_keystone_provision_only

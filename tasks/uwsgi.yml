@@ -20,6 +20,7 @@
     mode: "0744"
   with_items: "{{ openio_keystone_wsgi_program_names }}"
   register: _keystone_conf
+  tags: configure
 
 - name: restart keystone
   shell: |
@@ -28,4 +29,5 @@
   when:
     - _keystone_conf.changed
     - not openio_keystone_provision_only
+  tags: configure
 ...

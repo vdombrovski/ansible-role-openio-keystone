@@ -17,12 +17,14 @@
   stat:
     path: "{{ openio_keystone_fernet_tokens_key_repository }}/0"
   register: _fernet_keys
+  tags: configure
 
 - name: Create fernet keys for Keystone
   command: >
     {{ openio_keystone_bindir }}/keystone-manage fernet_setup
                                        --keystone-user "{{ openio_keystone_system_user_name }}"
                                        --keystone-group "{{ openio_keystone_system_group_name }}"
+  tags: configure
   when:
     - not _fernet_keys.stat.exists
 
@@ -31,6 +33,7 @@
     {{ openio_keystone_bindir }}/keystone-manage fernet_rotate
                                        --keystone-user "{{ openio_keystone_system_user_name }}"
                                        --keystone-group "{{ openio_keystone_system_group_name }}"
+  tags: configure
   when:
     - not _fernet_keys.stat.exists
   changed_when: false

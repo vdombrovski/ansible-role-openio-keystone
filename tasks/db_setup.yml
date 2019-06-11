@@ -7,6 +7,7 @@
     mode: 0755
     state: directory
   when: openio_keystone_database_engine == 'sqlite'
+  tags: configure
 
 - name: Create SQLite databases
   file:
@@ -17,6 +18,7 @@
     state: touch
   changed_when: false
   when: openio_keystone_database_engine == 'sqlite'
+  tags: configure
 
 - name: Check current state of Keystone DB
   command: "{{ openio_keystone_bindir }}/keystone-manage db_sync --check"
@@ -24,6 +26,7 @@
   failed_when: "_db_sync_check.rc | int == 1"
   changed_when: false
   run_once: "{{ not openio_keystone_bootstrap_all_nodes }}"
+  tags: configure
 
 - name: "Perform a Keystone DB sync expand"
   command: "{{ openio_keystone_bindir }}/keystone-manage db_sync --expand"
@@ -31,6 +34,7 @@
   when:
     - _db_sync_check.rc | int == 2
   ignore_errors: "{{ ansible_check_mode }}"
+  tags: configure
 
 - name: Perform a Keystone DB sync migrate
   command: "{{ openio_keystone_bindir }}/keystone-manage db_sync --migrate"
@@ -38,6 +42,7 @@
   when:
     - _db_sync_check.rc | int in [2, 3]
   ignore_errors: "{{ ansible_check_mode }}"
+  tags: configure
 
 - name: Perform a Keystone DB sync contract
   command: "{{ openio_keystone_bindir }}/keystone-manage db_sync --contract"
@@ -45,4 +50,5 @@
   when:
     - _db_sync_check.rc | int in [2, 3, 4]
   ignore_errors: "{{ ansible_check_mode }}"
+  tags: configure
 ...

@@ -11,6 +11,7 @@
   until: _wait_check is success
   retries: 12
   delay: 5
+  tags: configure
 
 - name: Bootstrap keystone admin and endpoint
   command: "{{ openio_keystone_bindir }}/keystone-manage bootstrap \
@@ -28,6 +29,8 @@
   until: add_service is success
   retries: 5
   delay: 10
-  tags: skip_ansible_lint
+  tags:
+    - skip_ansible_lint
+    - configure
   no_log: "{{ openio_keystone_no_log }}"
 ...

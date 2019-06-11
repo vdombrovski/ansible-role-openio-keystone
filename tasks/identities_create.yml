@@ -15,7 +15,7 @@
   retries: 5
   delay: 10
   no_log: "{{ openio_keystone_no_log }}"
-
+  tags: configure
 
 - name: Projects creation
   os_project:
@@ -31,6 +31,7 @@
   retries: 5
   delay: 10
   ignore_errors: "{{ ansible_check_mode }}"
+  tags: configure
 
 - name: Create roles
   command: "openstack --os-cloud {{ openio_keystone_cloudname }} \
@@ -47,6 +48,7 @@
   until: create_role is success
   retries: 5
   delay: 10
+  tags: configure
 
 - name: Add roles to projects
   os_user_role:
@@ -63,6 +65,7 @@
   retries: 5
   delay: 10
   ignore_errors: "{{ ansible_check_mode }}"
+  tags: configure
 
 - name: Declare a service
   os_keystone_service:
@@ -78,6 +81,7 @@
   retries: 5
   delay: 10
   ignore_errors: "{{ ansible_check_mode }}"
+  tags: configure
 
 #- name: Add endpoint to service
 #  os_keystone_endpoint:
@@ -90,6 +94,7 @@
 #    - "{{ openio_keystone_services }}"
 #    - endpoint
 #  run_once: "{{ not openio_keystone_bootstrap_all_nodes }}"
+#  tags: configure
 
 - name: Add endpoint to service
   command: "openstack --os-cloud {{ openio_keystone_cloudname }} endpoint create \
@@ -105,4 +110,5 @@
   retries: 5
   delay: 10
   ignore_errors: "{{ ansible_check_mode }}"
+  tags: configure
 ...
