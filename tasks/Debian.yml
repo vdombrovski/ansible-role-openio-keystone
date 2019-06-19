@@ -25,6 +25,25 @@
     state: absent
   tags: install
 
+- name: Upgrade python-shade (with http-proxy)
+  pip:
+    name: shade
+    state: present
+    version: '1.22.2'
+  register: install_packages_shade_proxy
+  until: install_packages_shade_proxy is success
+  retries: 5
+  delay: 2
+  ignore_errors: "{{ ansible_check_mode }}"
+  tags:
+    - install
+  environment:
+    HTTP_PROXY: "{{ openio_environment.http_proxy }}"
+    HTTPS_PROXY: "{{ openio_environment.http_proxy }}"
+  when:
+    - openio_environment is defined
+    - openio_environment.http_proxy is defined
+
 - name: Upgrade python-shade
   pip:
     name: shade
@@ -36,4 +55,5 @@
   delay: 2
   ignore_errors: "{{ ansible_check_mode }}"
   tags: install
+  when: install_packages_shade_proxy is skipped
 ...
