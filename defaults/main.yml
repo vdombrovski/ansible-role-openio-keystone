@@ -43,7 +43,7 @@ openio_keystone_config_cache_debug_cache_backend: ""
 openio_keystone_config_cache_memcache_servers: "{% if openio_keystone_nodes_group in groups -%}
   {{ groups[openio_keystone_nodes_group]
     | map('extract', hostvars, ['openio_bind_address'])
-    | map('regex_replace', '$', ':6019') | join(',') }}
+    | map('regex_replace', '$', ':6019') | list | unique | join(',') }}
   {%- else -%}
   {{ openio_keystone_bind_address }}:6019
   {%- endif %}"
