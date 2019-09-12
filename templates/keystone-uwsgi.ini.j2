@@ -7,6 +7,7 @@ wsgi-file = {{ openio_keystone_bindir }}/{{ item }}
 http-socket = {{ openio_keystone_uwsgi_bind[item]['http-socket']|default('') }}
 plugins = python
 
+need-app = true
 master = true
 enable-threads = true
 processes = {{ openio_keystone_wsgi_processes }}
